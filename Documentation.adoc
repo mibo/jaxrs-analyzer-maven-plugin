@@ -1,0 +1,53 @@
+= JAX-RS Doc Maven Plugin
+The JAX-RS Analyzer Maven plugin activates the https://github.com/sdaschner/jaxrs-analyzer[JAX-RS Analyzer] for Maven builds.
+
+To use this plugin add these xml snippet to your pom.xml in the `<plugins>` section.
+
+```
+<plugin>
+  <groupId>com.github.mibo</groupId>
+  <artifactId>jaxrs-doc-maven-plugin</artifactId>
+  <version>1.0.0</version>
+  <executions>
+    <execution>
+      <goals>
+        <goal>analyze-jaxrs</goal>
+      </goals>
+      <configuration>
+        <!-- Available backends are plaintext (default), swagger and asciidoc -->
+        <!-- Also supported is a comma separated list. E.g. `swagger,asciidoc` -->
+        <backend>plaintext</backend>
+        <!-- Domain of the deployed project, defaults to "" -->
+        <deployedDomain>example.com</deployedDomain>
+        <!-- Comma separated list of Swagger schemes (only for if backend is swagger, defaults to http) -->
+        <swaggerSchemes>https,http</swaggerSchemes>
+        <!-- Enables rendering of Swagger tags (defaults to false -> default tag will be used) -->
+        <renderSwaggerTags>true</renderSwaggerTags>
+        <!-- The number at which path position the Swagger tags will be extracted (defaults to 0) -->
+        <swaggerTagsPathOffset>1</swaggerTagsPathOffset>
+        <!-- Directory (relative to buildDir) where resources will be generated (defaults to jaxrs-analyzer) -->
+        <resourcesDir>jaxrs-analyzer</resourcesDir>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
+
+After building your project, the documentation resides under 'target/jaxrs-analyzer/'.
+
+== Configuration
+
+backend::
+The `backend` parameter specifies the output format of the analysis.
+The available formats are `Plaintext`, `AsciiDoc` and `Swagger`.
+Support multiple backends as comma separated list (e.g. `<backend>asciidoc,swagger</backend>`)
+
+deployedDomain::
+With `deployedDomain` the user may specify the URL which will contain the REST API later on.
+Tools like Swagger make use of this information (and offer possibilities to send calls directly, etc.).
++
+.Swagger options
+  * `swaggerSchemes` The comma separated list of Swagger schemes: `http` (default), `https`, `ws`, `wss`
+  * `renderSwaggerTags` Enables rendering of Swagger tags (defaults to false, then the default tag will be used)
+  * `swaggerTagsPathOffset` The number at which path position the Swagger tags will be extracted (defaults to 0)
+
