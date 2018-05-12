@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.mibo.jaxrsanalyzer.maven
+package com.github.mibo.jaxrsdoc.maven
 
 import java.util.*
 import java.util.stream.Collectors
@@ -22,7 +22,7 @@ import java.util.stream.Stream
 /**
  * The backend types available for the Maven plugin.
  *
- * @author Sebastian Daschner
+ * @author Sebastian Daschner, mibo
  */
 internal enum class BackendType constructor(val fileLocation: String) {
 

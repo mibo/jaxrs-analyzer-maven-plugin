@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.mibo.jaxrsanalyzer.maven
+package com.github.mibo.jaxrsdoc.maven
 
 import com.github.mibo.jaxrsdoc.JAXRSAnalyzer
 import com.github.mibo.jaxrsdoc.LogProvider
@@ -44,52 +44,52 @@ import java.util.stream.Stream
  * Maven goal which analyzes JAX-RS resources and generate according documentation (e.g. swagger, adoc, ...).
  *
  * @author Sebastian Daschner, mibo
- * @goal analyze-jaxrs
+ * @goal generate-doc
  * @phase process-test-classes
  * @requiresDependencyResolution compile
  */
-class JAXRSAnalyzerMojo : AbstractMojo() {
+class JaxRsDocMojo : AbstractMojo() {
 
   /**
    * The chosen backend(s) format. Defaults to plaintext.
    * Support multiple backends as comma separated list (e.g. `asciidoc,swagger`)
    *
-   * @parameter default-value="plaintext" property="jaxrs-analyzer.backend"
+   * @parameter default-value="plaintext" property="jaxrs-doc.backend"
    */
   private val backend: String? = null
 
   /**
    * The domain where the project will be deployed.
    *
-   * @parameter default-value="" property="jaxrs-analyzer.deployedDomain"
+   * @parameter default-value="" property="jaxrs-doc.deployedDomain"
    */
   private val deployedDomain: String? = null
 
   /**
    * The Swagger schemes.
    *
-   * @parameter default-value="http" property="jaxrs-analyzer.swaggerSchemes"
+   * @parameter default-value="http" property="jaxrs-doc.swaggerSchemes"
    */
   private val swaggerSchemes: Array<String>? = null
 
   /**
    * Specifies if Swagger tags should be generated.
    *
-   * @parameter default-value="false" property="jaxrs-analyzer.renderSwaggerTags"
+   * @parameter default-value="false" property="jaxrs-doc.renderSwaggerTags"
    */
   private val renderSwaggerTags: Boolean? = null
 
   /**
    * The number at which path position the Swagger tags should be extracted.
    *
-   * @parameter default-value="0" property="jaxrs-analyzer.swaggerTagsPathOffset"
+   * @parameter default-value="0" property="jaxrs-doc.swaggerTagsPathOffset"
    */
   private val swaggerTagsPathOffset: Int? = null
 
   /**
    * For plaintext and asciidoc backends, should they try to prettify inline JSON representation of requests/responses.
    *
-   * @parameter default-value="true" property="jaxrs-analyzer.inlinePrettify"
+   * @parameter default-value="true" property="jaxrs-doc.inlinePrettify"
    */
   private val inlinePrettify: Boolean? = null
 
@@ -155,7 +155,7 @@ class JAXRSAnalyzerMojo : AbstractMojo() {
   /**
    * Path, relative to outputDir, to generate resources
    *
-   * @parameter default-value="jaxrs-analyzer" property="jaxrs-analyzer.resourcesDir"
+   * @parameter default-value="jaxrs-doc" property="jaxrs-doc.resourcesDir"
    */
   private val resourcesDir: String? = null
 
@@ -185,9 +185,9 @@ class JAXRSAnalyzerMojo : AbstractMojo() {
               .map { it.toPath() }
               .collect(Collectors.toSet())
 
-      val analyzerVersion = project.pluginArtifactMap["com.github.mibo:jaxrs-analyzer-maven-plugin"]?.getVersion()
+      val analyzerVersion = project.pluginArtifactMap["com.github.mibo:jaxrs-doc-maven-plugin"]?.getVersion()
       dependencies.plus(fetchDependency("javax:javaee-api:7.0"))
-      dependencies.plus(fetchDependency("com.github.mibo:jaxrs-analyzer:$analyzerVersion"))
+      dependencies.plus(fetchDependency("com.github.mibo:jaxrs-doc:$analyzerVersion"))
       return dependencies
     }
 
@@ -245,7 +245,6 @@ class JAXRSAnalyzerMojo : AbstractMojo() {
   private fun configureBackend(backendType: BackendType): Backend {
     val config = HashMap<String, String>()
     config[SwaggerOptions.SWAGGER_SCHEMES] = Stream.of(*swaggerSchemes!!).collect(Collectors.joining(","))
-//    config[SwaggerOptions.SWAGGER_SCHEMES] = Stream.of(*swaggerSchemes!!).collect<String, *>(joining(","))
     config[SwaggerOptions.DOMAIN] = deployedDomain.toString()
     config[SwaggerOptions.RENDER_SWAGGER_TAGS] = renderSwaggerTags!!.toString()
     config[SwaggerOptions.SWAGGER_TAGS_PATH_OFFSET] = swaggerTagsPathOffset!!.toString()

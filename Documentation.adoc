@@ -11,7 +11,7 @@ To use this plugin add these xml snippet to your pom.xml in the `<plugins>` sect
   <executions>
     <execution>
       <goals>
-        <goal>analyze-jaxrs</goal>
+        <goal>generate-doc</goal>
       </goals>
       <configuration>
         <!-- Available backends are plaintext (default), swagger and asciidoc -->
@@ -25,15 +25,15 @@ To use this plugin add these xml snippet to your pom.xml in the `<plugins>` sect
         <renderSwaggerTags>true</renderSwaggerTags>
         <!-- The number at which path position the Swagger tags will be extracted (defaults to 0) -->
         <swaggerTagsPathOffset>1</swaggerTagsPathOffset>
-        <!-- Directory (relative to buildDir) where resources will be generated (defaults to jaxrs-analyzer) -->
-        <resourcesDir>jaxrs-analyzer</resourcesDir>
+        <!-- Directory (relative to buildDir) where resources will be generated (defaults to jaxrs-doc) -->
+        <resourcesDir>jaxrs-doc</resourcesDir>
       </configuration>
     </execution>
   </executions>
 </plugin>
 ```
 
-After building your project, the documentation resides under 'target/jaxrs-analyzer/'.
+After building your project, the documentation resides under 'target/jaxrs-doc/'.
 
 == Configuration
 

@@ -1,7 +1,7 @@
 = JAX-RS Analyzer Maven Plugin
 Based on create work of Sebastian Daschner: link:https://github.com/sdaschner/jaxrs-analyzer-maven-plugin[Maven plugin for the JAX-RS Analyzer].
 
-Maven plugin for the https://github.com/mibo/jaxrs-analyzer[JAX-RS Analyzer].
+Maven plugin for the https://github.com/mibo/jaxrs-doc[JAX-RS Documentation].
 
 To enable the plugin, simply add these lines to your pom.xml in the `<plugins>` section.
 
@@ -13,7 +13,7 @@ To enable the plugin, simply add these lines to your pom.xml in the `<plugins>` 
   <executions>
     <execution>
       <goals>
-        <goal>analyze-jaxrs</goal>
+        <goal>generate-doc</goal>
       </goals>
       <configuration>
         <backend>swagger,asciidoc</backend>
