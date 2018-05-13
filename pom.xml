@@ -75,6 +75,12 @@
       <version>${version.kotlin}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.5.1</version>
+      <optional>true</optional> <!-- annotations are not used at runtime because @Retention(value=CLASS), they are needed only to build the plugin -->
+    </dependency>
   </dependencies>
 
   <build>
@@ -115,9 +121,14 @@
         </configuration>
         <executions>
           <execution>
-            <id>mojo-descriptor</id>
+            <id>default-descriptor</id>
+            <phase>process-classes</phase>
+          </execution>
+          <!-- if you want to generate help goal -->
+          <execution>
+            <id>help-goal</id>
             <goals>
-              <goal>descriptor</goal>
+              <goal>helpmojo</goal>
             </goals>
           </execution>
         </executions>

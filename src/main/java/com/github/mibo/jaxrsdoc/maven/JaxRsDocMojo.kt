@@ -23,6 +23,9 @@ import com.github.mibo.jaxrsdoc.backend.swagger.SwaggerOptions
 import org.apache.maven.artifact.Artifact
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
+import org.apache.maven.plugins.annotations.LifecyclePhase
+import org.apache.maven.plugins.annotations.Mojo
+import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.project.MavenProject
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
@@ -48,6 +51,7 @@ import java.util.stream.Stream
  * @phase process-test-classes
  * @requiresDependencyResolution compile
  */
+@Mojo(name = "generate-doc", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES)
 class JaxRsDocMojo : AbstractMojo() {
 
   /**
@@ -56,6 +60,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="plaintext" property="jaxrs-doc.backend"
    */
+  @Parameter( defaultValue = "swagger", readonly = true )
   private val backend: String? = null
 
   /**
@@ -63,6 +68,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="" property="jaxrs-doc.deployedDomain"
    */
+  @Parameter( defaultValue = "", readonly = true )
   private val deployedDomain: String? = null
 
   /**
@@ -70,6 +76,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="http" property="jaxrs-doc.swaggerSchemes"
    */
+  @Parameter( defaultValue = "http", readonly = true )
   private val swaggerSchemes: Array<String>? = null
 
   /**
@@ -77,6 +84,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="false" property="jaxrs-doc.renderSwaggerTags"
    */
+  @Parameter( defaultValue = "false", readonly = true )
   private val renderSwaggerTags: Boolean? = null
 
   /**
@@ -84,6 +92,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="0" property="jaxrs-doc.swaggerTagsPathOffset"
    */
+  @Parameter( defaultValue = "0", readonly = true )
   private val swaggerTagsPathOffset: Int? = null
 
   /**
@@ -91,6 +100,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="true" property="jaxrs-doc.inlinePrettify"
    */
+  @Parameter( defaultValue = "true", readonly = true )
   private val inlinePrettify: Boolean? = null
 
   /**
@@ -98,6 +108,7 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( defaultValue = "\${project.build.outputDirectory}", readonly = true )
   private val outputDirectory: File? = null
 
   /**
@@ -105,6 +116,7 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( defaultValue = "\${project.build.sourceDirectory}", readonly = true )
   private val sourceDirectory: File? = null
 
   /**
@@ -112,11 +124,13 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( defaultValue = "\${project.build.directory}", readonly = true )
   private val buildDirectory: File? = null
 
   /**
    * @parameter property="project.build.sourceEncoding"
    */
+  @Parameter( defaultValue = "\${project.build.sourceEncoding}", readonly = true )
   private val encoding: String? = null
 
   /**
@@ -124,6 +138,7 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( defaultValue = "\${project}", readonly = true )
   private val project: MavenProject? = null
 
   /**
@@ -149,6 +164,7 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( defaultValue = "\${project.remotePluginRepositories}", readonly = true )
   private val remoteRepos: List<RemoteRepository>? = null
 
 
@@ -157,6 +173,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="jaxrs-doc" property="jaxrs-doc.resourcesDir"
    */
+  @Parameter( defaultValue = "jaxrd-doc", readonly = true )
   private val resourcesDir: String? = null
 
   private val backendTypes: List<BackendType>
