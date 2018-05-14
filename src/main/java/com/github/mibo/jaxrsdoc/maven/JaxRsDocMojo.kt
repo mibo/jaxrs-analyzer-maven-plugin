@@ -23,6 +23,7 @@ import com.github.mibo.jaxrsdoc.backend.swagger.SwaggerOptions
 import org.apache.maven.artifact.Artifact
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
+import org.apache.maven.plugins.annotations.Component
 import org.apache.maven.plugins.annotations.LifecyclePhase
 import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
@@ -146,6 +147,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @component
    */
+  @Component
   private val repoSystem: RepositorySystem? = null
 
   /**
@@ -155,6 +157,7 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( defaultValue = "\${repositorySystemSession}", readonly = true, required = true )
   private val repoSession: RepositorySystemSession? = null
 
   /**
@@ -173,7 +176,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="jaxrs-doc" property="jaxrs-doc.resourcesDir"
    */
-  @Parameter( defaultValue = "jaxrd-doc", readonly = true )
+  @Parameter( defaultValue = "jaxrs-doc", readonly = true )
   private val resourcesDir: String? = null
 
   private val backendTypes: List<BackendType>
@@ -290,7 +293,11 @@ class JaxRsDocMojo : AbstractMojo() {
 
     val result: ArtifactResult
     try {
-      result = repoSystem!!.resolveArtifact(repoSession, request)
+      if (repoSystem != null) {
+        result = repoSystem.resolveArtifact(repoSession, request)
+      } else {
+        throw IllegalStateException("No Repo System found")
+      }
     } catch (e: ArtifactResolutionException) {
       throw MojoExecutionException(e.message, e)
     }
