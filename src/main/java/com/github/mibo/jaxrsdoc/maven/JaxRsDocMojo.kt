@@ -23,6 +23,10 @@ import com.github.mibo.jaxrsdoc.backend.swagger.SwaggerOptions
 import org.apache.maven.artifact.Artifact
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugin.MojoExecutionException
+import org.apache.maven.plugins.annotations.Component
+import org.apache.maven.plugins.annotations.LifecyclePhase
+import org.apache.maven.plugins.annotations.Mojo
+import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.project.MavenProject
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
@@ -48,6 +52,7 @@ import java.util.stream.Stream
  * @phase process-test-classes
  * @requiresDependencyResolution compile
  */
+@Mojo(name = "generate-doc", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES)
 class JaxRsDocMojo : AbstractMojo() {
 
   /**
@@ -56,6 +61,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="plaintext" property="jaxrs-doc.backend"
    */
+  @Parameter( property="jaxrs-doc.backend", defaultValue = "swagger" )
   private val backend: String? = null
 
   /**
@@ -63,6 +69,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="" property="jaxrs-doc.deployedDomain"
    */
+  @Parameter( property="jaxrs-doc.deployedDomain", defaultValue = "" )
   private val deployedDomain: String? = null
 
   /**
@@ -70,6 +77,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="http" property="jaxrs-doc.swaggerSchemes"
    */
+  @Parameter( property="jaxrs-doc.swaggerSchemes", defaultValue = "http" )
   private val swaggerSchemes: Array<String>? = null
 
   /**
@@ -77,6 +85,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="false" property="jaxrs-doc.renderSwaggerTags"
    */
+  @Parameter( property="jaxrs-doc.renderSwaggerTags", defaultValue = "false" )
   private val renderSwaggerTags: Boolean? = null
 
   /**
@@ -84,6 +93,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="0" property="jaxrs-doc.swaggerTagsPathOffset"
    */
+  @Parameter( property = "jaxrs-doc.swaggerTagsPathOffset", defaultValue = "0" )
   private val swaggerTagsPathOffset: Int? = null
 
   /**
@@ -91,6 +101,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="true" property="jaxrs-doc.inlinePrettify"
    */
+  @Parameter( property="jaxrs-doc.inlinePrettify", defaultValue = "true" )
   private val inlinePrettify: Boolean? = null
 
   /**
@@ -98,6 +109,7 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( property = "project.build.outputDirectory", readonly = true, required = true )
   private val outputDirectory: File? = null
 
   /**
@@ -105,6 +117,7 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( property = "project.build.sourceDirectory", readonly = true, required = true )
   private val sourceDirectory: File? = null
 
   /**
@@ -112,11 +125,13 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( property = "project.build.directory", readonly = true, required = true )
   private val buildDirectory: File? = null
 
   /**
    * @parameter property="project.build.sourceEncoding"
    */
+  @Parameter( property = "project.build.sourceEncoding" )
   private val encoding: String? = null
 
   /**
@@ -124,6 +139,7 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( property = "project", readonly = true, required = true)
   private val project: MavenProject? = null
 
   /**
@@ -131,6 +147,7 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @component
    */
+  @Component
   private val repoSystem: RepositorySystem? = null
 
   /**
@@ -140,6 +157,7 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( property = "repositorySystemSession", readonly = true, required = true )
   private val repoSession: RepositorySystemSession? = null
 
   /**
@@ -149,6 +167,7 @@ class JaxRsDocMojo : AbstractMojo() {
    * @required
    * @readonly
    */
+  @Parameter( property = "project.remotePluginRepositories", readonly = true, required = true )
   private val remoteRepos: List<RemoteRepository>? = null
 
 
@@ -157,39 +176,53 @@ class JaxRsDocMojo : AbstractMojo() {
    *
    * @parameter default-value="jaxrs-doc" property="jaxrs-doc.resourcesDir"
    */
+  @Parameter( defaultValue = "jaxrs-doc", property = "jaxrs-doc.resourcesDir" )
   private val resourcesDir: String? = null
 
-  private val backendTypes: List<BackendType>
-    get() {
-      val backends = backend!!.split(",".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
-      return Arrays.stream<String>(backends)
-              .map { BackendType.fromString(it) }
-              .collect(Collectors.toList())
+//  private val backendTypes: List<BackendType>
+  private fun getBackendTypes(): List<BackendType> {
+    val backends = backend!!.split(",".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
+    return Arrays.stream<String>(backends)
+            .map { BackendType.fromString(it) }
+            .collect(Collectors.toList())
+  }
+
+//  private val dependencies: Set<Path>
+  // Java EE 7 and JAX-RS Analyzer API is needed internally
+  @Throws(MojoExecutionException::class)
+  private fun getDependencies(): Set<Path> {
+    project!!.setArtifactFilter { a -> true }
+
+    var artifacts = project.artifacts
+    LogProvider.debug("Artifacts (pre): $artifacts")
+    if (artifacts.isEmpty()) {
+      artifacts = project.dependencyArtifacts
     }
+    LogProvider.debug("Artifacts (post): $artifacts")
 
-  private// Java EE 7 and JAX-RS Analyzer API is needed internally
-  val dependencies: Set<Path>
-    @Throws(MojoExecutionException::class)
-    get() {
-      project!!.setArtifactFilter { a -> true }
+    val dependencies = artifacts.stream()
+//            .peek { LogProvider.debug("Artifacts debug stream start: " + it) }
+            .filter { it.scope != Artifact.SCOPE_TEST }
+//            .peek { LogProvider.debug("Artifacts debug: " + it) }
+            .map { it.file }
+            .filter { Objects.nonNull(it) }
+            .map { it.toPath() }
+            .collect(Collectors.toSet())
 
-      var artifacts = project.artifacts
-      if (artifacts.isEmpty()) {
-        artifacts = project.dependencyArtifacts
-      }
+    LogProvider.debug("Dependencies (pre fetch/plus): $dependencies")
+//    val analyzerVersion = "1.0.0"// project.pluginArtifactMap["com.github.mibo:jaxrs-doc-maven-plugin"]?.getVersion()
+    dependencies.add(fetchDependency("com.github.mibo:jaxrsdoc:" + getJaxRsDocVersion()))
+    dependencies.add(fetchDependency("javax:javaee-api:7.0"))
+    LogProvider.debug("Dependencies (post fetch/plus): $dependencies")
+    return dependencies
+  }
 
-      val dependencies = artifacts.stream()
-              .filter { a -> a.scope != Artifact.SCOPE_TEST }
-              .map { it.file }
-              .filter { Objects.nonNull(it) }
-              .map { it.toPath() }
-              .collect(Collectors.toSet())
-
-      val analyzerVersion = project.pluginArtifactMap["com.github.mibo:jaxrs-doc-maven-plugin"]?.getVersion()
-      dependencies.plus(fetchDependency("javax:javaee-api:7.0"))
-      dependencies.plus(fetchDependency("com.github.mibo:jaxrs-doc:$analyzerVersion"))
-      return dependencies
-    }
+  private fun getJaxRsDocVersion(): String? {
+    val p = Properties()
+    // TODO: improve this (exception handling?)
+    p.load(Thread.currentThread().contextClassLoader.getResourceAsStream("jaxrsdoc.properties"))
+    return p.getProperty("jaxrs-doc.version")
+  }
 
   @Throws(MojoExecutionException::class)
   override fun execute() {
@@ -201,7 +234,7 @@ class JaxRsDocMojo : AbstractMojo() {
       return
     }
 
-    val backendTypes = backendTypes
+    val backendTypes = getBackendTypes()
     LogProvider.info("analyzing JAX-RS resources, using $backendTypes (from backend => $backend)")
     for (backendType in backendTypes) {
       val backend = configureBackend(backendType)
@@ -209,7 +242,7 @@ class JaxRsDocMojo : AbstractMojo() {
       LogProvider.info("analyzing JAX-RS resources, using " + backend.name + " backends")
 
       // add dependencies to analysis class path
-      val classPaths = dependencies
+      val classPaths = getDependencies()
       LogProvider.debug("Dependency class paths are: $classPaths")
 
       val projectPaths = setOf<Path>(outputDirectory.toPath())
@@ -273,7 +306,11 @@ class JaxRsDocMojo : AbstractMojo() {
 
     val result: ArtifactResult
     try {
-      result = repoSystem!!.resolveArtifact(repoSession, request)
+      if (repoSystem != null) {
+        result = repoSystem.resolveArtifact(repoSession, request)
+      } else {
+        throw IllegalStateException("No Repo System found")
+      }
     } catch (e: ArtifactResolutionException) {
       throw MojoExecutionException(e.message, e)
     }
