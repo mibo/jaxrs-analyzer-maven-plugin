@@ -58,114 +58,91 @@ class JaxRsDocMojo : AbstractMojo() {
   /**
    * The chosen backend(s) format. Defaults to plaintext.
    * Support multiple backends as comma separated list (e.g. `asciidoc,swagger`)
-   *
-   * @parameter default-value="plaintext" property="jaxrs-doc.backend"
    */
   @Parameter( property="jaxrs-doc.backend", defaultValue = "swagger" )
   private val backend: String? = null
 
   /**
    * The domain where the project will be deployed.
-   *
-   * @parameter default-value="" property="jaxrs-doc.deployedDomain"
    */
   @Parameter( property="jaxrs-doc.deployedDomain", defaultValue = "" )
   private val deployedDomain: String? = null
 
   /**
+   * The used project name (if not set the project.name is used).
+   */
+  @Parameter( property="jaxrs-doc.projectName", defaultValue = "\${project.name}" )
+  private val projectName: String? = null
+
+  /**
+   * The base path (if not set the project.name is used).
+   */
+  @Parameter( property="jaxrs-doc.basePath", defaultValue = "/" )
+  private val basePath: String? = null
+
+  /**
    * The Swagger schemes.
-   *
-   * @parameter default-value="http" property="jaxrs-doc.swaggerSchemes"
    */
   @Parameter( property="jaxrs-doc.swaggerSchemes", defaultValue = "http" )
   private val swaggerSchemes: Array<String>? = null
 
   /**
    * Specifies if Swagger tags should be generated.
-   *
-   * @parameter default-value="false" property="jaxrs-doc.renderSwaggerTags"
    */
   @Parameter( property="jaxrs-doc.renderSwaggerTags", defaultValue = "false" )
   private val renderSwaggerTags: Boolean? = null
 
   /**
    * The number at which path position the Swagger tags should be extracted.
-   *
-   * @parameter default-value="0" property="jaxrs-doc.swaggerTagsPathOffset"
    */
   @Parameter( property = "jaxrs-doc.swaggerTagsPathOffset", defaultValue = "0" )
   private val swaggerTagsPathOffset: Int? = null
 
   /**
    * For plaintext and asciidoc backends, should they try to prettify inline JSON representation of requests/responses.
-   *
-   * @parameter default-value="true" property="jaxrs-doc.inlinePrettify"
    */
   @Parameter( property="jaxrs-doc.inlinePrettify", defaultValue = "true" )
   private val inlinePrettify: Boolean? = null
 
   /**
-   * @parameter property="project.build.outputDirectory"
-   * @required
-   * @readonly
    */
   @Parameter( property = "project.build.outputDirectory", readonly = true, required = true )
   private val outputDirectory: File? = null
 
   /**
-   * @parameter property="project.build.sourceDirectory"
-   * @required
-   * @readonly
    */
   @Parameter( property = "project.build.sourceDirectory", readonly = true, required = true )
   private val sourceDirectory: File? = null
 
   /**
-   * @parameter property="project.build.directory"
-   * @required
-   * @readonly
    */
   @Parameter( property = "project.build.directory", readonly = true, required = true )
   private val buildDirectory: File? = null
 
   /**
-   * @parameter property="project.build.sourceEncoding"
    */
   @Parameter( property = "project.build.sourceEncoding" )
   private val encoding: String? = null
 
   /**
-   * @parameter property="project"
-   * @required
-   * @readonly
    */
   @Parameter( property = "project", readonly = true, required = true)
   private val project: MavenProject? = null
 
   /**
    * The entry point to Aether.
-   *
-   * @component
    */
   @Component
   private val repoSystem: RepositorySystem? = null
 
   /**
    * The current repository/network configuration of Maven.
-   *
-   * @parameter property="repositorySystemSession"
-   * @required
-   * @readonly
    */
   @Parameter( property = "repositorySystemSession", readonly = true, required = true )
   private val repoSession: RepositorySystemSession? = null
 
   /**
    * The project's remote repositories to use for the resolution of plugins and their dependencies.
-   *
-   * @parameter property="project.remotePluginRepositories"
-   * @required
-   * @readonly
    */
   @Parameter( property = "project.remotePluginRepositories", readonly = true, required = true )
   private val remoteRepos: List<RemoteRepository>? = null
@@ -173,8 +150,6 @@ class JaxRsDocMojo : AbstractMojo() {
 
   /**
    * Path, relative to outputDir, to generate resources
-   *
-   * @parameter default-value="jaxrs-doc" property="jaxrs-doc.resourcesDir"
    */
   @Parameter( defaultValue = "jaxrs-doc", property = "jaxrs-doc.resourcesDir" )
   private val resourcesDir: String? = null
@@ -264,7 +239,7 @@ class JaxRsDocMojo : AbstractMojo() {
 
       // start analysis
       val start = System.currentTimeMillis()
-      JAXRSAnalyzer(projectPaths, sourcePaths, classPaths, project!!.name, project.version, backend, fileLocation).analyze()
+      JAXRSAnalyzer(projectPaths, sourcePaths, classPaths, projectName, project!!.version, basePath, backend, fileLocation).analyze()
       LogProvider.debug("Analysis took " + (System.currentTimeMillis() - start) + " ms")
     }
   }

@@ -24,6 +24,6 @@ To enable the plugin, simply add these lines to your pom.xml in the `<plugins>` 
 </plugin>
 ----
 
-After building your project, the documentation resides under 'target/jaxrs-analyzer/'.
+After building your project, the documentation resides under 'target/jaxrs-doc/'.
 
-For all configuration options please see the Maven plugin https://github.com/sdaschner/jaxrs-analyzer-maven-plugin/blob/master/Documentation.adoc[documentation].
+For all configuration options please see https://github.com/mibo/jaxrs-doc-maven-plugin/blob/master/Documentation.adoc[documentation].

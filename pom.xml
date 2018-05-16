@@ -38,7 +38,7 @@
 
     <version.kotlin>1.2.41</version.kotlin>
     <version.logback-classic>1.2.3</version.logback-classic>
-    <version.jaxrs-doc>1.0.0</version.jaxrs-doc>
+    <version.jaxrs-doc>1.1.0-SNAPSHOT</version.jaxrs-doc>
     <version.aether-api>1.0.2.v20150114</version.aether-api>
     <version.maven-plugin-api>3.3.9</version.maven-plugin-api>
     <version.maven-core>3.3.9</version.maven-core>

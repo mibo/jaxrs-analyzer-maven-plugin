@@ -19,6 +19,10 @@ To use this plugin add these xml snippet to your pom.xml in the `<plugins>` sect
         <backend>plaintext</backend>
         <!-- Domain of the deployed project, defaults to "" -->
         <deployedDomain>example.com</deployedDomain>
+        <!-- Domain of the deployed project, defaults to "" -->
+        <projectName>Yet another project</projectName>
+        <!-- Domain of the deployed project, defaults to "" -->
+        <basePath>/yap/rest</basePath>
         <!-- Comma separated list of Swagger schemes (only for if backend is swagger, defaults to http) -->
         <swaggerSchemes>https,http</swaggerSchemes>
         <!-- Enables rendering of Swagger tags (defaults to false -> default tag will be used) -->
