@@ -13,9 +13,9 @@ It is just a collection of ideas which _could be_ part of future releases.
 
 == Known issues (To be Fixed)
 List of known bugs/issues...
-  * _currently none_
+  * _currently none (afaik)_
 
-== [1.1.0-SNAPSHOT] - 2018-05-xx
+== [1.1.0] - 2018-05-16
 === Added
 * New options `basePath` and `projectName`
 
