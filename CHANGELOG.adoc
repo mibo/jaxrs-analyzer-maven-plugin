@@ -1,0 +1,47 @@
+= Change Log
+All notable changes to this project will be documented in this file.
+
+The format is based on link:http://keepachangelog.com[Keep a Changelog]
+and this project adheres to link:http://semver.org[Semantic Versioning].
+
+== [Future ideas/improvements] - `unreleased`
+This list is neither ordered by any priority nor it is meant that all (or any) listed ideas are part of any upcoming release. +
+It is just a collection of ideas which _could be_ part of future releases.
+
+=== To be Added
+  * TBD
+
+== Known issues (To be Fixed)
+List of known bugs/issues...
+  * _currently none_
+
+== [1.1.0-SNAPSHOT] - 2018-05-xx
+=== Added
+* New options `basePath` and `projectName`
+
+=== Changed
+* Updated to version `1.1.0` of `com.github.mibo:jaxrs-doc`
+** which was necessary for the _added_ features
+
+== [1.0.0] - 2018-05-15
+=== Added
+* Started project as fork of create work of create work of Sebastian Daschner: link:https://github.com/sdaschner/jaxrs-analyzer-maven-plugin[Maven plugin for the JAX-RS Analyzer].
+
+=== Changed
+* Use link:https://github.com/sdaschner/jaxrs-doc[JAX-RS Doc] instead of the link:https://github.com/sdaschner/jaxrs-analyzer[JAX-RS Analyzer].
+** Only to benefit of the updated/fixed fork.
+* Instead of `Java` use `Kotlin` (with the _Note_ that the initial code base was converted by _Intellij_ and afterwards only fixed that it compiles)
+
+//== [TEMPLATE]
+//=== Added
+//- TBD
+//=== Changed
+//- TBD
+//=== Deprecated
+//- TBD
+//=== Removed
+//- TBD
+//=== Fixed
+//- TBD
+//=== Security
+//- TBD
